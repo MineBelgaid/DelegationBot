@@ -32,7 +32,7 @@ format = '%Y-%m-%dT%H:%M:%S'
 d1 = datetime.datetime.strptime(db["date"], format)
 @client.event
 async def on_ready():
-  await client.change_presence(activity=discord.Game('Coding Myself to Death.'))
+  await client.change_presence(activity=discord.Game('Coding Myself to Death..'))
   new_post.start()
   print('We have logged in as {0.user}'.format(client))
   
