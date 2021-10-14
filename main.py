@@ -41,10 +41,8 @@ async def on_ready():
 async def on_guild_join(guild):
   with open('./assets/servers.json','r+') as f :
     servers = json.load(f)
-
-  servers['data'].append({str(guild.id):{'prefix' : '.'}})
-
-  with open('./assets/servers.json','w') as f :
+    servers["data"][str(guild.id)]= {"prefix" : "."}
+    f.seek(0)
     json.dump(servers,f,indent=4)
 
 @client.event 
@@ -57,29 +55,26 @@ async def on_guild_leave(guild):
 
 @client.command()
 async def setprefix(ctx,prefix):
-  with open('./assets/servers.json','r') as f :
+  with open('./assets/servers.json','r+') as f :
     servers = json.load(f)
-  servers['data'][str(ctx.guild.id)]['prefix'] =prefix
-  with open('./assets/servers.json','w') as f :
+    servers['data'][str(ctx.guild.id)]['prefix'] =prefix
     json.dump(servers,f,indent=4)
   await ctx.send(f'Prefix changed to {prefix}')
 
 
 @client.command()
 async def setwelcome(ctx):
-  with open('./assets/servers.json','r') as f :
+  with open('./assets/servers.json','r+') as f :
     servers = json.load(f)
-  servers['data'][str(ctx.guild.id)]['welcome']=ctx.channel.id
-  with open('./assets/servers.json','w') as f :
+    servers['data'][str(ctx.guild.id)]['welcome']=ctx.channel.id
     json.dump(servers,f,indent=4)
   await ctx.send('This channel has been set as **Welcome Channel**!')
 
 @client.command()
 async def setannouncements(ctx):
-  with open('./assets/servers.json','r') as f :
+  with open('./assets/servers.json','r+') as f :
     servers = json.load(f)
-  servers['data'][str(ctx.guild.id)]['announcements'] = ctx.channel.id
-  with open('./assets/servers.json','w') as f :
+    servers['data'][str(ctx.guild.id)]['announcements'] = ctx.channel.id
     json.dump(servers,f,indent=4)
   await ctx.send('This channel has been set as **Announcements Channel**!')
 
@@ -89,10 +84,9 @@ async def ping(ctx):
   
 @client.event
 async def on_member_join(member):
-  with open('./assets/members.json','r') as f :
+  with open('./assets/members.json','r+') as f :
     members = json.load(f)
-  members[str(member.id)] = member.joined_at.strftime("%b %d, %Y")
-  with open('./assets/members.json','w') as f :
+    members[str(member.id)] = member.joined_at.strftime("%b %d, %Y")
     json.dump(members,f,indent=4)
 
   with open('./assets/servers.json','r') as f :
