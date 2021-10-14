@@ -39,9 +39,11 @@ async def on_ready():
   
 @client.event 
 async def on_guild_join(guild):
-  with open('./assets/servers.json','r') as f :
+  with open('./assets/servers.json','r+') as f :
     servers = json.load(f)
-  servers['data'][str(guild.id)]['prefix'] = "."
+
+  servers['data'].append({str(guild.id):{'prefix' : '.'}})
+
   with open('./assets/servers.json','w') as f :
     json.dump(servers,f,indent=4)
 
