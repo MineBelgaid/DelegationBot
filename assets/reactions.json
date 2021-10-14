@@ -1,0 +1,38 @@
+[
+    {
+        "role_name": "owner",
+        "role_id": 816351010439036949,
+        "emoji": "\ud83d\udc28",
+        "msg_id": "898224636754542662"
+    },
+    {
+        "role_name": "owner",
+        "role_id": 816351010439036949,
+        "emoji": "\ud83d\udeaf",
+        "msg_id": "898224636754542662"
+    },
+    {
+        "role_name": "test",
+        "role_id": 897900844408766506,
+        "emoji": "\ud83d\ude35\u200d\ud83d\udcab",
+        "msg_id": "898224636754542662"
+    },
+    {
+        "role_name": "test",
+        "role_id": 897900844408766506,
+        "emoji": "\ud83e\udd45",
+        "msg_id": "898224636754542662"
+    },
+    {
+        "role_name": "test",
+        "role_id": 897900844408766506,
+        "emoji": "\ud83c\uddec\ud83c\uddee",
+        "msg_id": "898224636754542662"
+    },
+    {
+        "role_name": "test",
+        "role_id": 897900844408766506,
+        "emoji": "\ud83c\uddf8\ud83c\uddee",
+        "msg_id": "898224636754542662"
+    }
+]
