@@ -7,20 +7,22 @@ import urllib.request
 import json
 from discord.ext import commands,tasks
 from keep_alive import keep_alive
-from replit import db
 from PIL import Image, ImageDraw, ImageFilter,ImageOps, ImageDraw
 
-
+with open('./assets/secrets.json','r') as f :
+  secrets = json.load(f)
+with open('./assets/data.json','r') as k :
+  db = json.load(k)
 def get_prefix(client,message):
   with open('servers.json','r') as f :
     servers = json.load(f)
     return servers['data'][str(message.guild.id)]['prefix']
 
-im1 = Image.open('welcome.png')
+im1 = Image.open('./assets/images/welcome.png')
 intents= discord.Intents().all()
 intents.members=True
-my_secret = os.environ['token']
-url = os.environ['facebook']
+my_secret = secrets['token']
+url = secrets['facebook']
 response = urllib.request.urlopen(url)
 data = json.loads(response.read())
 
@@ -106,7 +108,7 @@ async def on_member_join(member):
       description = f'{member.mention} ',
       colour = discord.Colour.blue(),
     )
-    im = Image.open("logo.png")
+    im = Image.open("./assets/images/logo.png")
     im = im.resize((120, 120));
     bigsize = (im.size[0] * 3, im.size[1] * 3)
     mask = Image.new('L', bigsize, 0)
@@ -116,12 +118,12 @@ async def on_member_join(member):
     im.putalpha(mask)
     output = ImageOps.fit(im, mask.size, centering=(0.5, 0.5))
     output.putalpha(mask)
-    output.save('output.png')
+    output.save('./assets/images/output.png')
 
     back_im = im1.copy()
     back_im.paste(im,(20,0))
-    back_im.save('welcome2.png')
-    file = discord.File("welcome2.png", filename="welcome2.png")
+    back_im.save('./assets/images/welcome2.png')
+    file = discord.File("./assets/images/welcome2.png", filename="welcome2.png")
     embed.set_image(url="attachment://welcome2.png")
     await channel.send(embed=embed,file=file)
 
@@ -146,6 +148,7 @@ async def latest(ctx):
   data = json.loads(response.read())
   latest_post2= data['data'][0]['created_time']
   datetime2 = datetime.datetime.strptime(latest_post2[:latest_post2.index('+')], format)
+  print(latest_post2)
   embed = discord.Embed(
     title = 'Latest Announcement',
     description = data['data'][0]['message'],
@@ -203,6 +206,8 @@ async def new_post():
         )
         embed.set_image(url=data['media']['image']['src'])
         await channel.send(embed=embed)
+  else : 
+    print("not")
 
 
 
