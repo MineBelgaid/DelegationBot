@@ -13,7 +13,7 @@ with open('./assets/secrets.json','r') as f :
 with open('./assets/data.json','r') as k :
   db = json.load(k)
 def get_prefix(client,message):
-  with open('servers.json','r') as f :
+  with open('./assets/servers.json','r') as f :
     servers = json.load(f)
     return servers['data'][str(message.guild.id)]['prefix']
 
@@ -39,15 +39,15 @@ async def on_ready():
   
 @client.event 
 async def on_guild_join(guild):
-  with open('server.json','r') as f :
+  with open('./assets/servers.json','r') as f :
     servers = json.load(f)
   servers['data'][str(guild.id)]['prefix'] = "."
-  with open('servers.json','w') as f :
+  with open('./assets/servers.json','w') as f :
     json.dump(servers,f,indent=4)
 
 @client.event 
 async def on_guild_leave(guild):
-  with open('servers.json','r') as f :
+  with open('./assets/servers.json','r') as f :
     servers = json.load(f)
   servers['data'].pop([str(guild.id)])
   with open('servers.json','w') as f :
@@ -55,29 +55,29 @@ async def on_guild_leave(guild):
 
 @client.command()
 async def setprefix(ctx,prefix):
-  with open('servers.json','r') as f :
+  with open('./assets/servers.json','r') as f :
     servers = json.load(f)
   servers['data'][str(ctx.guild.id)]['prefix'] =prefix
-  with open('servers.json','w') as f :
+  with open('./assets/servers.json','w') as f :
     json.dump(servers,f,indent=4)
   await ctx.send(f'Prefix changed to {prefix}')
 
 
 @client.command()
 async def setwelcome(ctx):
-  with open('servers.json','r') as f :
+  with open('./assets/servers.json','r') as f :
     servers = json.load(f)
   servers['data'][str(ctx.guild.id)]['welcome']=ctx.channel.id
-  with open('servers.json','w') as f :
+  with open('./assets/servers.json','w') as f :
     json.dump(servers,f,indent=4)
   await ctx.send('This channel has been set as **Welcome Channel**!')
 
 @client.command()
 async def setannouncements(ctx):
-  with open('servers.json','r') as f :
+  with open('./assets/servers.json','r') as f :
     servers = json.load(f)
   servers['data'][str(ctx.guild.id)]['announcements'] = ctx.channel.id
-  with open('servers.json','w') as f :
+  with open('./assets/servers.json','w') as f :
     json.dump(servers,f,indent=4)
   await ctx.send('This channel has been set as **Announcements Channel**!')
 
@@ -87,13 +87,13 @@ async def ping(ctx):
   
 @client.event
 async def on_member_join(member):
-  with open('members.json','r') as f :
+  with open('./assets/members.json','r') as f :
     members = json.load(f)
   members[str(member.id)] = member.joined_at.strftime("%b %d, %Y")
-  with open('members.json','w') as f :
+  with open('./assets/members.json','w') as f :
     json.dump(members,f,indent=4)
 
-  with open('servers.json','r') as f :
+  with open('./assets/servers.json','r') as f :
     servers = json.load(f)
   guild = client.get_guild(member.guild.id)
   role = discord.utils.get(member.guild.roles, name='Membre')
