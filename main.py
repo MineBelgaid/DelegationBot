@@ -97,7 +97,14 @@ async def setannouncements(ctx):
 
 @client.command()
 async def ping(ctx):
-    await ctx.send('pong!')
+    embed = discord.Embed(
+        title='Claim your roles!',
+        description=':one: : Group 1\n\n:two: : Group 2\n\n:three: : Group 3\n\n :four: : Group 4!\n',
+        colour=discord.Colour.blue()
+
+    )
+    embed.set_footer(text="React with the Emoji corresponding to your group!")
+    await ctx.send(embed=embed)
 
 
 @client.event
@@ -158,6 +165,21 @@ async def on_raw_reaction_add(payload):
                     role = discord.utils.get(client.get_guild(
                         payload.guild_id).roles, id=x['role_id'])
                     await payload.member.add_roles(role)
+
+
+@client.event
+async def on_raw_reaction_remove(payload):
+
+    with open('./assets/reactions.json') as f:
+        data = json.load(f)
+        for x in data:
+            if x['emoji'] == payload.emoji.name and x['msg_id'] == str(payload.message_id):
+                role = discord.utils.get(client.get_guild(
+                    payload.guild_id).roles, id=x['role_id'])
+                await client.get_guild(
+                    payload.guild_id).get_member(payload.user_id).remove_roles(role)
+
+
 
 
 @client.command()
@@ -252,6 +274,14 @@ async def new_post():
                 await channel.send(embed=embed)
     else:
         print("not")
+
+
+
+@client.command()
+async def setup_counter(ctx,name,chnl):
+    guild = client.get_guild(ctx.guild.id)
+    category = await  guild.create_category(name,overwrites = None,reason = None)
+    await ctx.guild.create_text_channel(chnl,category = category)
 
 
 keep_alive()
