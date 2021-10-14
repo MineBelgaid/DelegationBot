@@ -101,7 +101,7 @@ async def on_member_join(member):
   if 'welcome' in servers['data'][str(member.guild.id)] :
     channel=guild.get_channel(servers['data'][str(member.guild.id)]['welcome'])
     print(member.avatar_url)
-    await member.avatar_url.save("logo.png")
+    await member.avatar_url.save("./assets/images/logo.png")
     embed = discord.Embed(
       title = f'Our Newest Geek! :spy:',
       description = f'{member.mention} ',
