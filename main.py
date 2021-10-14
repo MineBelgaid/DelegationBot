@@ -180,8 +180,6 @@ async def on_raw_reaction_remove(payload):
                     payload.guild_id).get_member(payload.user_id).remove_roles(role)
 
 
-
-
 @client.command()
 async def autorole(ctx, emoji, role: discord.Role, *, msgId):
     msg = await ctx.fetch_message(msgId)
@@ -276,12 +274,21 @@ async def new_post():
         print("not")
 
 
+@client.command()
+async def setup_counter(ctx, name, chnl):
+    guild = client.get_guild(ctx.guild.id)
+    category = await guild.create_category(name, overwrites=None, reason=None)
+    await ctx.guild.create_text_channel(chnl, category=category)
+
 
 @client.command()
-async def setup_counter(ctx,name,chnl):
-    guild = client.get_guild(ctx.guild.id)
-    category = await  guild.create_category(name,overwrites = None,reason = None)
-    await ctx.guild.create_text_channel(chnl,category = category)
+async def add_channel(ctx, cat, chnl):
+    category = discord.utils.get(ctx.guild.categories, name=cat)
+    await ctx.guild.create_text_channel(chnl, category=category)
+@client.command()
+async def delete_channel(ctx, cat, chnl):
+    category = discord.utils.get(ctx.guild.categories, name=cat)
+    await ctx.guild.delete_text_channel(chnl, category=category)
 
 
 keep_alive()
