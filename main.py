@@ -5,6 +5,7 @@ import json
 import datetime
 import urllib.request
 import json
+from discord import embeds
 from discord.ext import commands, tasks
 from keep_alive import keep_alive
 from PIL import Image, ImageDraw, ImageFilter, ImageOps, ImageDraw
@@ -91,8 +92,18 @@ async def setannouncements(ctx):
         servers['data'][str(ctx.guild.id)]['announcements'] = ctx.channel.id
     with open('servers.json', 'w') as f:
         json.dump(servers, f, indent=4)
-
     await ctx.send('This channel has been set as **Announcements Channel**!')
+
+
+@client.command()
+async def setdeleted(ctx):
+    with open('./assets/servers.json', 'r') as f:
+        servers = json.load(f)
+        servers['data'][str(ctx.guild.id)]['deleted'] = ctx.channel.id
+    with open('./assets/servers.json', 'w') as f:
+        json.dump(servers, f, indent=4)
+
+    await ctx.send('This channel has been set as **Deleted Messages Channel**!')
 
 
 @client.command()
@@ -285,11 +296,33 @@ async def setup_counter(ctx, name, chnl):
 async def add_channel(ctx, cat, chnl):
     category = discord.utils.get(ctx.guild.categories, name=cat)
     await ctx.guild.create_text_channel(chnl, category=category)
+
+
+@client.command()
+async def add_voice(ctx, cat, chnl):
+    category = discord.utils.get(ctx.guild.categories, name=cat)
+    await ctx.guild.create_voice_channel(chnl, overwrites=None, category=category, reaspn=None)
+
+
 @client.command()
 async def delete_channel(ctx, cat, chnl):
     category = discord.utils.get(ctx.guild.categories, name=cat)
-    await ctx.guild.delete_text_channel(chnl, category=category)
+    await ctx.guild.delete_text_channel(chnl, overwrites=None, category=category, reaspn=None)
 
 
+@client.event
+async def on_message_delete(message):
+    msg = str(message.author) + ' deleted a message'
+    embed = discord.Embed(
+        description=f'Channel : <#{message.channel.id}>',
+
+        title=str(msg)
+    )
+    embed.add_field(name="Message deleted ",value=f"```{str(message.content)}```" )
+    with open('./assets/servers.json', 'r') as f:
+        servers = json.load(f)
+        deleted = servers['data'][str(message.guild.id)]['deleted']
+        channel = client.get_channel(deleted)
+    await channel.send(embed=embed)
 keep_alive()
 client.run(my_secret)
