@@ -1,3 +1,4 @@
+from logging import exception
 import discord
 import os
 import urllib
@@ -5,10 +6,15 @@ import json
 import datetime
 import urllib.request
 import json
+import os
+import asyncio
+import youtube_dl
+
 from discord import embeds
 from discord.ext import commands, tasks
 from keep_alive import keep_alive
 from PIL import Image, ImageDraw, ImageFilter, ImageOps, ImageDraw
+
 
 with open('./assets/secrets.json', 'r') as f:
     secrets = json.load(f)
@@ -30,11 +36,12 @@ url = secrets['facebook']
 response = urllib.request.urlopen(url)
 data = json.loads(response.read())
 
-client = commands.Bot(command_prefix=get_prefix, intents=intents)
+client = commands.Bot(command_prefix=commands.when_mentioned_or(
+    "."), intents=intents)
+
 
 latest_post = data['data'][0]['created_time']
 format = '%Y-%m-%dT%H:%M:%S'
-
 d1 = datetime.datetime.strptime(db["date"], format)
 
 
@@ -160,6 +167,92 @@ async def on_member_join(member):
 async def clear(ctx, amount=5):
     await ctx.message.delete()
     await ctx.channel.purge(limit=amount)
+
+
+@client.command()
+async def mute(ctx, member: discord.Member = None, time=0, *, unit, reason=None):
+    guild = ctx.guild
+    mutedRole = discord.utils.get(guild.roles, id=898548577259892807)
+    if not member:
+        await ctx.send("You must choose a user!")
+    elif not time:
+        await ctx.send("You must give a time")
+
+    embed = discord.Embed(title="muted ",
+                          description=f"{member.mention} has been muted")
+    embed.add_field(name="Reason: ", value=reason, inline=False)
+    await ctx.send(embed=embed)
+    await member.add_roles(mutedRole, reason=reason)
+    if unit == "s":
+        wait = 1 * time
+        await asyncio.sleep(wait)
+    elif unit == "m":
+        wait = 60 * time
+        await asyncio.sleep(wait)
+    await member.remove_roles(mutedRole)
+    embed = discord.Embed(title="muted ",
+                          description=f"{member.mention} has been unmuted")
+    embed.add_field(name="Reason: ", value=reason, inline=False)
+    await ctx.send(embed=embed)
+
+
+@client.command()
+@commands.has_permissions(manage_roles=True)
+async def unmute(ctx, member: discord.Member = None, *, reason=None):
+    guild = ctx.guild
+    mutedRole = discord.utils.get(guild.roles, id=898548577259892807)
+    if not member:
+        await ctx.send("You must choose a memeber!")
+    else:
+        embed = discord.Embed(
+            title="Unmuted ", description=f"{member.mention} has been unmuted")
+        embed.add_field(name="Reason: ", value=reason, inline=False)
+        await member.remove_roles(mutedRole)
+        await ctx.send(embed=embed)
+
+
+# Voice commands
+
+
+@client.command()
+async def join(ctx):
+    if ctx.author.voice is None:
+        await ctx.send("You're not in a voice channel!")
+    voice_channel = ctx.author.voice.channel
+    if ctx.voice_client is None:
+        await voice_channel.connect()
+    else:
+        await ctx.voice_client.move_to(voice_channel)
+
+
+@client.command()
+async def disconnect(ctx):
+    await ctx.voice_client.disconnect()
+    await ctx.send("Succesfully left the channel ! ")
+
+@client.command()
+async def pause(ctx):
+    await ctx.voice_client.pause()
+    await ctx.send("Paused ! ")
+    
+
+@client.command()
+async def resume(ctx):
+    await ctx.voice_client.resume()
+    await ctx.send("Resumed ! ")
+
+@client.command()
+async def play(ctx, url):
+    FFMPEG_OPTIONS = {
+        'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+    YDL_OPTIONS = {'format': "bestaudio"}
+    vc = ctx.voice_client
+
+    with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
+        info = ydl.extract_info(url, download=False)
+        url2 = info['formats'][0]['url']
+        source = await discord.FFmpegOpusAudio.from_probe(url2, ** FFMPEG_OPTIONS)
+        vc.play(source)
 
 
 @client.event
@@ -318,7 +411,8 @@ async def on_message_delete(message):
 
         title=str(msg)
     )
-    embed.add_field(name="Message deleted ",value=f"```{str(message.content)}```" )
+    embed.add_field(name="Message deleted ",
+                    value=f"```{str(message.content)}```")
     with open('./assets/servers.json', 'r') as f:
         servers = json.load(f)
         deleted = servers['data'][str(message.guild.id)]['deleted']
