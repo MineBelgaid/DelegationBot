@@ -211,24 +211,33 @@ async def unmute(ctx, member: discord.Member = None, *, reason=None):
         await ctx.send(embed=embed)
 
 
+
 # Voice commands
 
 
 @client.command()
 async def join(ctx):
+    user = ctx.message.author
+    vc = user.voice.channel
+    voice = discord.utils.get(client.voice_clients,guild =ctx.guild)
     if ctx.author.voice is None:
         await ctx.send("You're not in a voice channel!")
     voice_channel = ctx.author.voice.channel
-    if ctx.voice_client is None:
-        await voice_channel.connect()
+    if voice is None:
+        await vc.connect()
+        await ctx.send("Delegation has arrived to the channel!")
     else:
-        await ctx.voice_client.move_to(voice_channel)
+        await ctx.send("I'm already in an existing channel")
 
 
 @client.command()
 async def disconnect(ctx):
-    await ctx.voice_client.disconnect()
-    await ctx.send("Succesfully left the channel ! ")
+    voice_client = discord.utils.get(ctx.bot.voice_clients, guild=ctx.guild)
+    if voice_client is not None:
+        await ctx.voice_client.disconnect()
+        await ctx.send("Succesfully left the channel ! ")
+    else :
+        await ctx.send("I am not connected") 
 
 @client.command()
 async def pause(ctx):
@@ -253,6 +262,7 @@ async def play(ctx, url):
         url2 = info['formats'][0]['url']
         source = await discord.FFmpegOpusAudio.from_probe(url2, ** FFMPEG_OPTIONS)
         vc.play(source)
+        ctx.send("Now playing ")
 
 
 @client.event
