@@ -6,6 +6,7 @@ class Ping(commands.Cog,name="Ping"):
         self.bot=bot
 
     @commands.command()
+    @commands.has_permissions(manage_channels=True)
     async def ping(self,ctx:commands.Context):
         embed = discord.Embed(
             title='Claim your roles!',

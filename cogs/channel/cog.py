@@ -8,23 +8,27 @@ class Channels(commands.Cog, name="Channels"):
         self.bot = bot
 
     @commands.command()
+    @commands.has_permissions(manage_channels=True)
     async def add_channel(self, ctx, cat : str, chnl : str):
         category = discord.utils.get(ctx.guild.categories, name=cat)
         await ctx.guild.create_text_channel(chnl, category=category)
 
     @commands.command()
+    @commands.has_permissions(manage_channels=True)
     async def add_voice(ctx, cat, chnl):
         category = discord.utils.get(ctx.guild.categories, name=cat)
         await ctx.guild.create_voice_channel(chnl, overwrites=None, category=category, reaspn=None)
 
 
     @commands.command()
+    @commands.has_permissions(manage_channels=True)
     async def delete_channel(ctx, cat, chnl):
         category = discord.utils.get(ctx.guild.categories, name=cat)
         await ctx.guild.delete_text_channel(chnl, overwrites=None, category=category, reaspn=None)
 
 
     @commands.command()
+    @commands.has_permissions(manage_channels=True)
     async def add_category(self,ctx,chnl, name):
         """
             adds channels

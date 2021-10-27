@@ -34,6 +34,7 @@ class Roles(commands.Cog,name="Roles"):
 
 
     @commands.command()
+    @commands.has_permissions(manage_roles=True)
     async def autorole(self, ctx, emoji, role: discord.Role, *, msgId):
         msg = await ctx.fetch_message(msgId)
         await msg.add_reaction(emoji)

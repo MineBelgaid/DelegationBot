@@ -6,6 +6,7 @@ class Settings(commands.Cog,name="Server Settings"):
     def __init__(self,bot:commands.Bot):
         self.bot=bot
     @commands.command()
+    @commands.has_permissions(manage_channels=True)
     async def setprefix(self,ctx, prefix):
         with open('./assets/servers.json', 'r') as f:
             servers = json.load(f)
@@ -16,6 +17,7 @@ class Settings(commands.Cog,name="Server Settings"):
 
 
     @commands.command()
+    @commands.has_permissions(manage_channels=True)
     async def setwelcome(self,ctx):
         with open('./assets/servers.json', 'r') as f:
             servers = json.load(f)
@@ -27,6 +29,7 @@ class Settings(commands.Cog,name="Server Settings"):
 
 
     @commands.command()
+    @commands.has_permissions(manage_channels=True)
     async def setannouncements(self,ctx):
         with open('./assets/servers.json', 'r') as f:
             servers = json.load(f)
@@ -35,6 +38,7 @@ class Settings(commands.Cog,name="Server Settings"):
             json.dump(servers, f, indent=4)
         await ctx.send('This channel has been set as **Announcements Channel**!')
     @commands.command()
+    @commands.has_permissions(manage_channels=True)
     async def setmain(self,ctx):
         with open('./assets/servers.json', 'r') as f:
             servers = json.load(f)
@@ -46,6 +50,7 @@ class Settings(commands.Cog,name="Server Settings"):
 
 
     @commands.command()
+    @commands.has_permissions(manage_channels=True)
     async def setdeleted(self, ctx):
         with open('./assets/servers.json', 'r') as f:
             servers = json.load(f)

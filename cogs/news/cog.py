@@ -32,7 +32,6 @@ class News(commands.Cog,name="News"):
         latest_post2 = data['data'][0]['created_time']
         datetime2 = datetime.datetime.strptime(
             latest_post2[:latest_post2.index('+')], format)
-        print(latest_post2)
         embed = discord.Embed(
             title='Latest Announcement',
             description=data['data'][0]['message'],
@@ -40,7 +39,6 @@ class News(commands.Cog,name="News"):
         )
         embed.set_footer(text='time added :' +
                         datetime2.strftime('%Y-%m-%d AT %H:%M:%S'))
-        print('yes')
         if 'attachments' in data['data'][0] and 'subattachments'not in data['data'][0]['attachments']['data'][0]:
             embed.set_image(url=data['data'][0]['attachments']
                             ['data'][0]['media']['image']['src'])
@@ -54,7 +52,7 @@ class News(commands.Cog,name="News"):
                 await ctx.send(embed=embed)
     global channel
     
-    @tasks.loop(seconds=30)
+    @tasks.loop(seconds=60)
     async def new_post(self):
         with open('./assets/servers.json','r') as an:
             servers = json.load(an)
