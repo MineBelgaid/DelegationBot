@@ -2,9 +2,6 @@
 import discord
 import os
 import json
-import telebot
-import telegram.ext
-import requests
 from discord.ext import commands
 from keep_alive import keep_alive
 

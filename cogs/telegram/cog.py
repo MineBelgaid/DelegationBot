@@ -1,6 +1,5 @@
-import os
+
 import requests
-import discord
 import json
 from discord.ext import commands
 
@@ -33,9 +32,8 @@ class Telegram(commands.Cog,name="Telegram"):
                         }
                         url = f"https://api.telegram.org/bot{key2}/sendMessage"
                         r = requests.get(url, params=params)
+                        r.raise_for_status()
 
-        else:
-            print("no")
 
 def setup(bot:commands.Bot):
     bot.add_cog(Telegram(bot))
